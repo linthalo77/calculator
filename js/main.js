@@ -37,14 +37,14 @@ function operate(a, b, op) {
     }
 }
 
-
 function displayDigit(num) {
-    display.textContent += num;
-    displayContent = display.textContent;
-}
-
-function storeNum() {
-    numbers.push(+displayContent);
+    if(display.textContent === "0") {
+        display.textContent = num;
+        displayContent = display.textContent;
+    } else {
+        display.textContent += num;
+        displayContent = display.textContent;
+    }
 }
 
 function clearDisplay() {
@@ -54,29 +54,31 @@ function clearDisplay() {
 
 function evaluate() {
     clearDisplay();
-    console.log(numbers[0]);
-    console.log(numbers[1]);
-    let result = operate(numbers[0], numbers[1], operator);
-    numbers = [];
+    let result = operate(num1, num2, operator);
     displayDigit(result);
+    num1 = displayContent;
+    num2 = "";
 }
 
 buttons.forEach((button) => {
     button.addEventListener("click", function (e) {
         switch(e.target.className) {
             case "digit":
-                if(!hasOperator) {
-                    displayDigit(+e.target.textContent);
-                } else {
-                    storeNum();
-                    clearDisplay();
-                    displayDigit(+e.target.textContent);
+                if(operator == "") {
+                    displayDigit(e.target.textContent);
+                    num1 = displayContent;
+                } else if (operator != "") {
+                    if (needClear) {
+                        clearDisplay();
+                        needClear = false;
+                    }
+                    displayDigit(e.target.textContent);
+                    num2 = displayContent;
                 }
                 break;
             case "operator":
-                hasOperator = true;
-                if (numbers.length >= 1) {
-                    storeNum();
+                needClear = true;
+                if (num1 != "" && num2 != "" && operator != "") {
                     evaluate();
                     operator = e.target.textContent;
                 } else {
@@ -84,24 +86,31 @@ buttons.forEach((button) => {
                 }
                 break;
             case "equals":
-                if (numbers.length >= 1 && hasOperator) {
-                    storeNum();
+                if (num1 != "" && num2 != "" && operator != "") {
                     evaluate();
-                    hasOperator = false;
-                } else if (numbers.length < 1 && hasOperator){
-                    storeNum();
-                    numbers[1] = numbers[0];
+                } else if (num1 != "" && operator != ""){
+                    num2 = num1;
                     evaluate();
-                    hasOperator = false;
                 }
                 break;
+            case "clear":
+                clearDisplay();
+                displayDigit("0");
+                num1 = "0";
+                num2 = "";
+
+                operator = "";
+                needClear = false;
+                displayContent = "0";
             default: 
                 console.log("No valid button");
             }
     })
 })
 
-let numbers = [];
-let operator;
-let hasOperator = false;
-let displayContent;
+let num1 = "0";
+let num2 = "";
+
+let operator = "";
+let needClear = false;
+let displayContent = "0";
