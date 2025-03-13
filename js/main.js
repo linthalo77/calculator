@@ -34,39 +34,45 @@ function operate(a, b, op) {
     }
 }
 
+
 function displayDigit(num) {
     display.textContent += num;
+    displayContent = display.textContent;
+    console.log(displayContent);
 }
 
-function evaluateAndDisplay() {
-    let temp = operate(num1, num2, operator);
-    displayDigit(temp);
+function storeNum() {
+    numbers.push(+displayContent);
+    console.log(numbers);
+}
 
-    num1 = temp;
-    firstNum = true;
-    num2 = '';
+function clearDisplay() {
+    display.textContent = "";
+    displayContent = display.textContent;
 }
 
 buttons.forEach((button) => {
     button.addEventListener("click", function (e) {
         switch(e.target.className) {
             case "digit":
-                console.log(firstNum);
-                displayDigit(e.target.textContent);
-                if (firstNum)
-                    num1 += e.target.textContent;
-                else 
-                    num2 += e.target.textContent;
+                if(!hasOperator) {
+                    displayDigit(+e.target.textContent);
+                } else {
+                    storeNum();
+                    clearDisplay();
+                    displayDigit(+e.target.textContent);
+                }
                 break;
             case "operator":
-                firstNum = !firstNum;
-                operator = e.target.textContent;                
-                display.textContent = "";
+                hasOperator = true;
+                operator = e.target.textContent;
                 break;
             case "equals":
-                display.textContent = "";
-                evaluateAndDisplay();
-
+                storeNum();
+                clearDisplay();
+                let result = operate(numbers[0], numbers[1], operator);
+                displayDigit(result);
+                hasOperator = false;
                 break;
             default: 
                 console.log("No valid button");
@@ -75,7 +81,8 @@ buttons.forEach((button) => {
 })
 
 
-let firstNum = true;
-let num1 = "";
-let operator = "";
-let num2 = "";
+
+let numbers = [];
+let operator;
+let hasOperator = false;
+let displayContent;
