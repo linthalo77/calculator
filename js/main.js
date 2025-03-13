@@ -1,7 +1,5 @@
 const display = document.querySelector(".display");
-const digits = document.querySelectorAll(".digits>button");
-const operators = document.querySelectorAll(".operators>button");
-const equals = document.querySelector(".equals");
+const buttons = document.querySelectorAll(".buttons");
 
 function add(a, b) {
     return a + b;
@@ -37,46 +35,47 @@ function operate(a, b, op) {
 }
 
 function displayDigit(num) {
-    display.textContent = num;
+    display.textContent += num;
 }
 
+function evaluateAndDisplay() {
+    let temp = operate(num1, num2, operator);
+    displayDigit(temp);
 
+    num1 = temp;
+    firstNum = true;
+    num2 = '';
+}
 
-digits.forEach((digit) => {
-    digit.addEventListener("click", function (e) {
-        displayDigit(e.target.textContent);
-        displayContent += e.target.textContent;
-        console.log(displayContent);
+buttons.forEach((button) => {
+    button.addEventListener("click", function (e) {
+        switch(e.target.className) {
+            case "digit":
+                console.log(firstNum);
+                displayDigit(e.target.textContent);
+                if (firstNum)
+                    num1 += e.target.textContent;
+                else 
+                    num2 += e.target.textContent;
+                break;
+            case "operator":
+                firstNum = !firstNum;
+                operator = e.target.textContent;                
+                display.textContent = "";
+                break;
+            case "equals":
+                display.textContent = "";
+                evaluateAndDisplay();
+
+                break;
+            default: 
+                console.log("No valid button");
+            }
     })
 })
 
-operators.forEach((operator) => {
-    operator.addEventListener("click", function (e) {
-        displayContent += e.target.textContent;
-        console.log(displayContent);
-    })
-})
 
-equals.addEventListener("click", function (e) {
-    num1 = +displayContent.charAt(0);
-    operator = displayContent.charAt(1);
-    num2 = +displayContent.charAt(2);
-    let result = operate(num1, num2, operator);
-    displayDigit(result);
-    displayContent = result;
-})
-
-
-let displayContent = "";
-let num1 = 0;
-let operator = "+";
-let num2 = 0;
-
-/*if (displayContent.length >= 3) {
-    num1 = +displayContent.charAt(0);
-    operator = displayContent.charAt(1);
-    num2 = +displayContent.charAt(2);
-    operate(num1, num2, operator);
-}*/
-
-
+let firstNum = true;
+let num1 = "";
+let operator = "";
+let num2 = "";
