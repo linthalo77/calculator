@@ -14,6 +14,9 @@ function multiply(a, b) {
 }
 
 function divide(a, b) {
+    if (b === 0) 
+        return "Snarky message";
+
     return a / b;
 }
 
@@ -38,17 +41,24 @@ function operate(a, b, op) {
 function displayDigit(num) {
     display.textContent += num;
     displayContent = display.textContent;
-    console.log(displayContent);
 }
 
 function storeNum() {
     numbers.push(+displayContent);
-    console.log(numbers);
 }
 
 function clearDisplay() {
     display.textContent = "";
     displayContent = display.textContent;
+}
+
+function evaluate() {
+    clearDisplay();
+    console.log(numbers[0]);
+    console.log(numbers[1]);
+    let result = operate(numbers[0], numbers[1], operator);
+    numbers = [];
+    displayDigit(result);
 }
 
 buttons.forEach((button) => {
@@ -67,30 +77,29 @@ buttons.forEach((button) => {
                 hasOperator = true;
                 if (numbers.length >= 1) {
                     storeNum();
-                    clearDisplay();
-                    let result = operate(numbers[0], numbers[1], operator);
-                    numbers = [];
-                    displayDigit(result);
+                    evaluate();
                     operator = e.target.textContent;
                 } else {
                     operator = e.target.textContent;
                 }
                 break;
             case "equals":
-                storeNum();
-                clearDisplay();
-                let result = operate(numbers[0], numbers[1], operator);
-                numbers = [];
-                displayDigit(result);
-                hasOperator = false;
+                if (numbers.length >= 1 && hasOperator) {
+                    storeNum();
+                    evaluate();
+                    hasOperator = false;
+                } else if (numbers.length < 1 && hasOperator){
+                    storeNum();
+                    numbers[1] = numbers[0];
+                    evaluate();
+                    hasOperator = false;
+                }
                 break;
             default: 
                 console.log("No valid button");
             }
     })
 })
-
-
 
 let numbers = [];
 let operator;
