@@ -65,12 +65,22 @@ buttons.forEach((button) => {
                 break;
             case "operator":
                 hasOperator = true;
-                operator = e.target.textContent;
+                if (numbers.length >= 1) {
+                    storeNum();
+                    clearDisplay();
+                    let result = operate(numbers[0], numbers[1], operator);
+                    numbers = [];
+                    displayDigit(result);
+                    operator = e.target.textContent;
+                } else {
+                    operator = e.target.textContent;
+                }
                 break;
             case "equals":
                 storeNum();
                 clearDisplay();
                 let result = operate(numbers[0], numbers[1], operator);
+                numbers = [];
                 displayDigit(result);
                 hasOperator = false;
                 break;
